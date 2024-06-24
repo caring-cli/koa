@@ -2,7 +2,7 @@
  * @Author: Wanko
  * @Date: 2024-04-05 16:33:12
  * @LastEditors: Wanko
- * @LastEditTime: 2024-06-24 17:12:22
+ * @LastEditTime: 2024-06-24 17:54:31
  * @Description:
  */
 const path = require('path')
@@ -27,8 +27,13 @@ const JWT_REFRESH_SCRIPT = 'wanko-jwt-refresh-secret'
 const JWT_EXPIRT_IN = '1d'
 const JWT_REFRESH_EXPIRE_IN = '7d'
 
+const BASIC_NAME = 'wanko'
+const BASIC_PASS = 'wanko'
+
 module.exports = {
   BASE_URL,
+  BASIC_NAME,
+  BASIC_PASS,
   LOCAL_STATIC_PATH,
   CONNECT_STR: debug ? CONNECT_STR_DEV : CONNECT_STR_PRO,
   UPLOAD_DIR: debug ? LOCAL_STATIC_PATH : PROD_STATIC_PATH,
