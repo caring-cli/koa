@@ -2,7 +2,7 @@
  * @Author: Wanko
  * @Date: 2024-04-11 14:10:08
  * @LastEditors: Wanko
- * @LastEditTime: 2024-06-15 17:45:32
+ * @LastEditTime: 2024-06-24 16:25:30
  * @Description:
  */
 const { CODES, CODES_NAME } = require('./constant.js')
@@ -10,11 +10,11 @@ const { CODES, CODES_NAME } = require('./constant.js')
 class BaseResponse {
   constructor(data, message = 'success') {
     this.code = 0
-    if (typeof data === 'string') {
-      this.message = data
-      data = null
-      message = null
-    }
+    // if (typeof data === 'string') {
+    //   this.message = data
+    //   data = null
+    //   message = null
+    // }
     if (data) this.data = data
     if (message) this.message = message
   }
@@ -38,6 +38,7 @@ const response = (ctx, ...args) => {
   const CODE_NAME_MAP = Object.keys(CODES_NAME)
   console.log('response', args, args[0])
   if (typeof args[0] === 'string' && CODE_NAME_MAP.includes(args[0])) {
+    console.log('object');
     // 返回错误响应
     console.log('返回错误响应')
     const codeName = args[0]
@@ -50,6 +51,7 @@ const response = (ctx, ...args) => {
 }
 
 const error = (ctx, codeName) => {
+
   ctx.throw(CODE[codeName], codeName)
 }
 

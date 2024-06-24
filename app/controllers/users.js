@@ -2,7 +2,7 @@
  * @Author: Wanko
  * @Date: 2024-04-04 18:41:43
  * @LastEditors: Wanko
- * @LastEditTime: 2024-06-15 18:59:24
+ * @LastEditTime: 2024-06-24 17:36:11
  * @Description:
  */
 const User = require('../models/users')
@@ -22,11 +22,11 @@ class UsersCtl {
   }
   async create(ctx) {
     ctx.verifyParams({
-      name: 'string',
+      username: 'string',
       password: 'string'
     })
-    const { name } = ctx.request.body
-    const hasUser = await User.findOne({ name })
+    const { username } = ctx.request.body
+    const hasUser = await User.findOne({ username })
     // 409 冲突状态
     if (hasUser) return response(ctx, CODES_NAME.USER_EXIST) 
     const user = await new User(ctx.request.body).save('')
@@ -47,15 +47,14 @@ class UsersCtl {
 
   async login(ctx) {
     ctx.verifyParams({
-      name: 'string',
+      username: 'string',
       password: 'string'
     })
-    console.log(ctx.request.body)
     const user = await User.findOne(ctx.request.body)
     if (!user) return response(ctx, CODES_NAME.USER_PASSWORD_ERROR)
-    const { _id, name } = user
-    const token = signToken({ _id, name })
-    const refreshToken = signRefreshToken({ _id, name })
+    const { _id, username } = user
+    const token = signToken({ _id, username })
+    const refreshToken = signRefreshToken({ _id, username })
 
     const data = {
       user,

@@ -2,18 +2,21 @@
  * @Author: Wanko
  * @Date: 2024-04-04 18:27:40
  * @LastEditors: Wanko
- * @LastEditTime: 2024-06-15 17:45:19
+ * @LastEditTime: 2024-06-24 17:28:00
  * @Description:
  */
 const fs = require('fs')
-const { bodyParser } = require('@koa/bodyparser')
+const { koaBody } = require('koa-body')
+
 const cors = require('koa-cors')
 const error = require('koa-json-error')
 const parameter = require('koa-parameter')
 const errorMid = require('../middleware/error')
 const logger = require('koa-logger')
 const koaStatic = require('koa-static')
-const path = require('path')
+const dayjs = require('dayjs')
+dayjs().unix
+const { LOCAL_STATIC_PATH, UPLOAD_DIR } = require('../config')
 module.exports = (app) => {
   app.use(
     error({
@@ -28,12 +31,37 @@ module.exports = (app) => {
       }
     })
   )
-  
 
-  app.use(koaStatic(path.join(__dirname, '/../public')))
-  // console.log(path.join(__dirname, 'public'))
+  app.use(
+    koaStatic(LOCAL_STATIC_PATH, {
+      gzip: true
+    })
+  )
+  app.use(
+    koaBody({
+      multipart: true,
+      formidable: {
+        uploadDir: UPLOAD_DIR,
+        keepExtensions: true,
+        onFileBegin: (name, file) => {
+          let fileName = file.originalFilename
+          let filePath = `${UPLOAD_DIR}/${fileName}`
+          if (fs.existsSync(filePath)) {
+            const time = dayjs().format('YYYYMMDDHHmmss')
+            fileName = `${time}-${fileName}`
+            filePath = `${UPLOAD_DIR}/${fileName}`
+          }
+          file.newFilename = fileName
+          file.path = filePath
+          file.filepath = filePath
+        }
+      }
+    })
+  )
+
+  // console.log(path.join(__dirname, STATIC_PATH))
+
   app.use(cors())
-  app.use(bodyParser())
   app.use(parameter(app))
   app.use(logger())
   app.use(errorMid)
